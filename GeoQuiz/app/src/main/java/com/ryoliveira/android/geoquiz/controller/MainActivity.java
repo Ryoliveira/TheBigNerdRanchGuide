@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,7 +19,8 @@ public class MainActivity extends AppCompatActivity {
 
     private Button trueButton;
     private Button falseButton;
-    private Button nextButton;
+    private ImageButton nextButton;
+    private ImageButton prevButton;
     private TextView questionTextView;
 
     private List<Question> questionList = Arrays.asList(
@@ -38,10 +40,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Widgets
         trueButton = findViewById(R.id.true_button);
         falseButton = findViewById(R.id.false_button);
         nextButton = findViewById(R.id.next_button);
+        prevButton = findViewById(R.id.prev_button);
         questionTextView = findViewById(R.id.question_text_view);
+
+        questionTextView.setOnClickListener(view -> {
+            increaseIndex();
+            updateQuestion();
+        });
 
         trueButton.setOnClickListener( view -> {
             //This is where the code goes that you want to execute when the true button is clicked
@@ -53,9 +62,17 @@ public class MainActivity extends AppCompatActivity {
         });
 
         nextButton.setOnClickListener(view -> {
-            currentIndex = (currentIndex + 1) % questionList.size();
+            increaseIndex();
             updateQuestion();
         });
+
+        prevButton.setOnClickListener(view -> {
+            decreaseIndex();
+            updateQuestion();
+        });
+
+
+
         updateQuestion();
     }
 
@@ -68,5 +85,13 @@ public class MainActivity extends AppCompatActivity {
         boolean correctAnswer = questionList.get(currentIndex).isAnswer();
         int messageResId = (answer == correctAnswer) ? R.string.correct_toast : R.string.incorrect_toast;
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show();
+    }
+
+    private void increaseIndex(){
+        currentIndex = (currentIndex + 1) % questionList.size();
+    }
+
+    private void decreaseIndex(){
+        currentIndex = ((currentIndex - 1) + questionList.size()) % questionList.size();
     }
 }
