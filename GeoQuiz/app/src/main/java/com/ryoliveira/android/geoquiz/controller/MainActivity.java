@@ -14,6 +14,7 @@ import com.ryoliveira.android.geoquiz.model.Question;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     private boolean[] isAnswered = new boolean[questionList.size()];
 
     private int currentIndex = 0;
+    private int totalAnswered = 0;
+    private float totalCorrect = 0;
 
 
 
@@ -52,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         prevButton = findViewById(R.id.prev_button);
         questionTextView = findViewById(R.id.question_text_view);
 
+        //Button Listeners
         questionTextView.setOnClickListener(view -> {
             increaseIndex();
             updateQuestion();
@@ -61,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
             //This is where the code goes that you want to execute when the true button is clicked
             checkAnswer(true);
         });
-
 
         falseButton.setOnClickListener(view -> {
             checkAnswer(false);
@@ -76,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
             decreaseIndex();
             updateQuestion();
         });
+
+        //Set initial question
         updateQuestion();
     }
 
@@ -123,12 +128,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkAnswer(boolean answer){
+        int messageResId;
+
         boolean correctAnswer = questionList.get(currentIndex).isAnswer();
-        int messageResId = (answer == correctAnswer) ? R.string.correct_toast : R.string.incorrect_toast;
+        if(answer == correctAnswer){
+            messageResId = R.string.correct_toast;
+            totalCorrect++;
+        }else{
+            messageResId = R.string.incorrect_toast;
+        }
+
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show();
-        isAnswered[currentIndex] = true;
+        isAnswered[currentIndex] = true; // Mark question index as answered
+        totalAnswered++;
+        //Disable Buttons for current question
         trueButton.setEnabled(false);
         falseButton.setEnabled(false);
+        if(totalAnswered == questionList.size()) { // If all questions are answered, display percentage
+            displayFinalScorePercentage();         // answered correctly
+        }
     }
 
     private void increaseIndex(){
@@ -137,6 +155,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void decreaseIndex(){
         currentIndex = ((currentIndex - 1) + questionList.size()) % questionList.size();
+    }
+
+    private void displayFinalScorePercentage(){
+        float totalPercentCorrect = (totalCorrect / questionList.size()) * 100f;
+        Toast.makeText(this, String.format(Locale.getDefault(), "Score: %.2f%%", totalPercentCorrect), Toast.LENGTH_SHORT).show();
     }
 
 }
