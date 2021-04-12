@@ -33,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
             new Question(R.string.question_americas, true),
             new Question(R.string.question_asia, true));
 
+    private boolean[] isAnswered = new boolean[questionList.size()];
+
     private int currentIndex = 0;
 
 
@@ -60,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
             checkAnswer(true);
         });
 
+
         falseButton.setOnClickListener(view -> {
             checkAnswer(false);
         });
@@ -73,9 +76,6 @@ public class MainActivity extends AppCompatActivity {
             decreaseIndex();
             updateQuestion();
         });
-
-
-
         updateQuestion();
     }
 
@@ -113,12 +113,22 @@ public class MainActivity extends AppCompatActivity {
     private void updateQuestion(){
         int questionTextResId = questionList.get(currentIndex).getQuestionResId();
         questionTextView.setText(questionTextResId);
+        if(isAnswered[currentIndex]){ // If question was already answered, disable true/false buttons
+            trueButton.setEnabled(false);
+            falseButton.setEnabled(false);
+        }else{
+            trueButton.setEnabled(true);
+            falseButton.setEnabled(true);
+        }
     }
 
     private void checkAnswer(boolean answer){
         boolean correctAnswer = questionList.get(currentIndex).isAnswer();
         int messageResId = (answer == correctAnswer) ? R.string.correct_toast : R.string.incorrect_toast;
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show();
+        isAnswered[currentIndex] = true;
+        trueButton.setEnabled(false);
+        falseButton.setEnabled(false);
     }
 
     private void increaseIndex(){
@@ -128,6 +138,5 @@ public class MainActivity extends AppCompatActivity {
     private void decreaseIndex(){
         currentIndex = ((currentIndex - 1) + questionList.size()) % questionList.size();
     }
-
 
 }
