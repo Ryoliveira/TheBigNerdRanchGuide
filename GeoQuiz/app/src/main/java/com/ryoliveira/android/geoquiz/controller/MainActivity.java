@@ -1,13 +1,13 @@
 package com.ryoliveira.android.geoquiz.controller;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
-import android.view.Gravity;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.util.Log;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.ryoliveira.android.geoquiz.R;
 import com.ryoliveira.android.geoquiz.model.Question;
@@ -16,6 +16,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    private final String TAG = "MainActivity";
 
     private Button trueButton;
     private Button falseButton;
@@ -38,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate(Bundle)");
         setContentView(R.layout.activity_main);
 
         //Widgets
@@ -76,6 +79,37 @@ public class MainActivity extends AppCompatActivity {
         updateQuestion();
     }
 
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart() Called");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop() Called");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy() Called");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause() Called");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume() Called");
+    }
+
     private void updateQuestion(){
         int questionTextResId = questionList.get(currentIndex).getQuestionResId();
         questionTextView.setText(questionTextResId);
@@ -94,4 +128,6 @@ public class MainActivity extends AppCompatActivity {
     private void decreaseIndex(){
         currentIndex = ((currentIndex - 1) + questionList.size()) % questionList.size();
     }
+
+
 }
