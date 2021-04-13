@@ -20,7 +20,7 @@ public class Question {
         this.questionResId = questionResId;
     }
 
-    public boolean isAnswer() {
+    public boolean getAnswer() {
         return answer;
     }
 

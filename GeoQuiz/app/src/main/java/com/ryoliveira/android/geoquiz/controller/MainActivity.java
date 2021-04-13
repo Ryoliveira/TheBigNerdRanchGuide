@@ -8,12 +8,11 @@ import android.widget.Toast;
 import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.ryoliveira.android.geoquiz.R;
-import com.ryoliveira.android.geoquiz.model.Question;
+import com.ryoliveira.android.geoquiz.viewmodel.QuizViewModel;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
@@ -26,21 +25,9 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton prevButton;
     private TextView questionTextView;
 
-    private List<Question> questionList = Arrays.asList(
-            new Question(R.string.question_australia, true),
-            new Question(R.string.question_oceans, true),
-            new Question(R.string.question_mideast, false),
-            new Question(R.string.question_africa, false),
-            new Question(R.string.question_americas, true),
-            new Question(R.string.question_asia, true));
-
-    private boolean[] isAnswered = new boolean[questionList.size()];
-
-    private int currentIndex = 0;
-    private int totalAnswered = 0;
-    private float totalCorrect = 0;
-
-
+    private QuizViewModel getQuizViewModel(){
+        return ViewModelProviders.of(this).get(QuizViewModel.class);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Button Listeners
         questionTextView.setOnClickListener(view -> {
-            increaseIndex();
+            getQuizViewModel().increaseCurrentIndex();
             updateQuestion();
         });
 
@@ -71,12 +58,12 @@ public class MainActivity extends AppCompatActivity {
         });
 
         nextButton.setOnClickListener(view -> {
-            increaseIndex();
+            getQuizViewModel().increaseCurrentIndex();
             updateQuestion();
         });
 
         prevButton.setOnClickListener(view -> {
-            decreaseIndex();
+            getQuizViewModel().decreaseCurrentIndex();
             updateQuestion();
         });
 
@@ -116,49 +103,43 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateQuestion(){
-        int questionTextResId = questionList.get(currentIndex).getQuestionResId();
+        int questionTextResId = getQuizViewModel().getCurrentQuestionResId();
         questionTextView.setText(questionTextResId);
-        if(isAnswered[currentIndex]){ // If question was already answered, disable true/false buttons
-            trueButton.setEnabled(false);
-            falseButton.setEnabled(false);
+        if(getQuizViewModel().isCurrentQuestionAnswered()){ // If question was already answered, disable true/false buttons
+            setAnswerButtonsActiveState(false);
         }else{
-            trueButton.setEnabled(true);
-            falseButton.setEnabled(true);
+            setAnswerButtonsActiveState(true);
         }
     }
 
     private void checkAnswer(boolean answer){
         int messageResId;
 
-        boolean correctAnswer = questionList.get(currentIndex).isAnswer();
+        boolean correctAnswer = getQuizViewModel().getQuestionAnswer();
         if(answer == correctAnswer){
             messageResId = R.string.correct_toast;
-            totalCorrect++;
+            getQuizViewModel().increaseTotalCorrect();
         }else{
             messageResId = R.string.incorrect_toast;
         }
 
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show();
-        isAnswered[currentIndex] = true; // Mark question index as answered
-        totalAnswered++;
-        //Disable Buttons for current question
-        trueButton.setEnabled(false);
-        falseButton.setEnabled(false);
-        if(totalAnswered == questionList.size()) { // If all questions are answered, display percentage
-            displayFinalScorePercentage();         // answered correctly
+        getQuizViewModel().markCurrentQuestionAsAnswered(); // Mark question index as answered
+        getQuizViewModel().increaseTotalAnswered(); //Increase total number of questions answered
+        setAnswerButtonsActiveState(false); //Disable Buttons for current question
+        Log.d(TAG, getQuizViewModel().getTotalAnswered()+"");
+        if(getQuizViewModel().getTotalAnswered() == getQuizViewModel().getQuestionListSize()) { // If all questions are answered, display percentage
+            displayFinalScorePercentage();                                            // answered correctly
         }
     }
 
-    private void increaseIndex(){
-        currentIndex = (currentIndex + 1) % questionList.size();
-    }
-
-    private void decreaseIndex(){
-        currentIndex = ((currentIndex - 1) + questionList.size()) % questionList.size();
+    private void setAnswerButtonsActiveState(boolean active){
+        trueButton.setEnabled(active);
+        falseButton.setEnabled(active);
     }
 
     private void displayFinalScorePercentage(){
-        float totalPercentCorrect = (totalCorrect / questionList.size()) * 100f;
+        float totalPercentCorrect = (getQuizViewModel().getTotalCorrect() / getQuizViewModel().getQuestionListSize()) * 100f;
         Toast.makeText(this, String.format(Locale.getDefault(), "Score: %.2f%%", totalPercentCorrect), Toast.LENGTH_SHORT).show();
     }
 
