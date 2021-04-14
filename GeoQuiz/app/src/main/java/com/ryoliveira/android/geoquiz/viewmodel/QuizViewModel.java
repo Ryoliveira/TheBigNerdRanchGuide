@@ -43,6 +43,10 @@ public class QuizViewModel extends ViewModel {
         return questionList.get(currentIndex).getAnswer();
     }
 
+    public void setIsAnswered(boolean[] questionAnswered){
+        this.isAnswered = questionAnswered;
+    }
+
     public boolean[] getIsAnswered(){
         return isAnswered;
     }
@@ -77,6 +81,10 @@ public class QuizViewModel extends ViewModel {
 
     public float getTotalCorrect() {
         return totalCorrect;
+    }
+
+    public void setTotalCorrect(float totalCorrect){
+        this.totalCorrect = totalCorrect;
     }
 
     public void increaseTotalCorrect() {

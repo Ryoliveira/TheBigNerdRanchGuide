@@ -20,6 +20,9 @@ public class MainActivity extends AppCompatActivity {
 
     private final String TAG = "MainActivity";
     private final String KEY_INDEX = "index";
+    private final String KEY_ANSWERED_QUESTIONS = "answeredQuestions";
+    private final String KEY_TOTAL_ANSWERED = "totalQuestionsAnswered";
+    private final String KEY_TOTAL_CORRECT = "totalCorrect";
 
     private Button trueButton;
     private Button falseButton;
@@ -37,8 +40,9 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate(Bundle)");
         setContentView(R.layout.activity_main);
 
-        int currentIndex = (savedInstanceState != null) ? savedInstanceState.getInt(KEY_INDEX) : 0;
-        getQuizViewModel().setCurrentIndex(currentIndex);
+        if(savedInstanceState != null){
+            loadDataFromSavedInstanceState(savedInstanceState);
+        }
 
         //Widgets
         trueButton = findViewById(R.id.true_button);
@@ -77,6 +81,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -112,7 +118,9 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         Log.i(TAG, "onSaveInstanceState()");
         outState.putInt(KEY_INDEX, getQuizViewModel().getCurrentIndex());
-
+        outState.putBooleanArray(KEY_ANSWERED_QUESTIONS, getQuizViewModel().getIsAnswered());
+        outState.putInt(KEY_TOTAL_ANSWERED, getQuizViewModel().getTotalAnswered());
+        outState.putFloat(KEY_TOTAL_CORRECT, getQuizViewModel().getTotalCorrect());
 
     }
 
@@ -153,6 +161,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void displayFinalScorePercentage(){
         Toast.makeText(this, String.format(Locale.getDefault(), "Score: %.2f%%", getQuizViewModel().getTotalPercentCorrect()), Toast.LENGTH_SHORT).show();
+    }
+
+    private void loadDataFromSavedInstanceState(Bundle savedInstanceState) {
+        QuizViewModel quizViewModel = getQuizViewModel();
+        quizViewModel.setCurrentIndex(savedInstanceState.getInt(KEY_INDEX));
+        quizViewModel.setIsAnswered(savedInstanceState.getBooleanArray(KEY_ANSWERED_QUESTIONS));
+        quizViewModel.setTotalAnswered(savedInstanceState.getInt(KEY_TOTAL_ANSWERED));
+        quizViewModel.setTotalCorrect(savedInstanceState.getFloat(KEY_TOTAL_CORRECT));
     }
 
 }
