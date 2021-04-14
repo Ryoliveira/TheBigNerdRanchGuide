@@ -7,6 +7,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -18,6 +19,7 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
 
     private final String TAG = "MainActivity";
+    private final String KEY_INDEX = "index";
 
     private Button trueButton;
     private Button falseButton;
@@ -34,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate(Bundle)");
         setContentView(R.layout.activity_main);
+
+        int currentIndex = (savedInstanceState != null) ? savedInstanceState.getInt(KEY_INDEX) : 0;
+        getQuizViewModel().setCurrentIndex(currentIndex);
 
         //Widgets
         trueButton = findViewById(R.id.true_button);
@@ -100,6 +105,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume() Called");
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.i(TAG, "onSaveInstanceState()");
+        outState.putInt(KEY_INDEX, getQuizViewModel().getCurrentIndex());
+
+
     }
 
     private void updateQuestion(){

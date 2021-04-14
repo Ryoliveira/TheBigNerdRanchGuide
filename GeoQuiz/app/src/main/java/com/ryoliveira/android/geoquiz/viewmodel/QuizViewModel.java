@@ -43,6 +43,17 @@ public class QuizViewModel extends ViewModel {
         return questionList.get(currentIndex).getAnswer();
     }
 
+    public boolean[] getIsAnswered(){
+        return isAnswered;
+    }
+
+    public int getCurrentIndex(){
+        return currentIndex;
+    }
+
+    public void setCurrentIndex(int index){
+        this.currentIndex = index;
+    }
 
     public void increaseCurrentIndex() {
         this.currentIndex = (currentIndex + 1) % questionList.size();
@@ -54,6 +65,10 @@ public class QuizViewModel extends ViewModel {
 
     public int getTotalAnswered() {
         return totalAnswered;
+    }
+
+    public void setTotalAnswered(int totalAnswered){
+        this.totalAnswered = totalAnswered;
     }
 
     public void increaseTotalAnswered() {
