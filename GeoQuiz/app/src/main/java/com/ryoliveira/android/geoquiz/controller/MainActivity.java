@@ -127,7 +127,6 @@ public class MainActivity extends AppCompatActivity {
         getQuizViewModel().markCurrentQuestionAsAnswered(); // Mark question index as answered
         getQuizViewModel().increaseTotalAnswered(); //Increase total number of questions answered
         setAnswerButtonsActiveState(false); //Disable Buttons for current question
-        Log.d(TAG, getQuizViewModel().getTotalAnswered()+"");
         if(getQuizViewModel().getTotalAnswered() == getQuizViewModel().getQuestionListSize()) { // If all questions are answered, display percentage
             displayFinalScorePercentage();                                            // answered correctly
         }
@@ -139,8 +138,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void displayFinalScorePercentage(){
-        float totalPercentCorrect = (getQuizViewModel().getTotalCorrect() / getQuizViewModel().getQuestionListSize()) * 100f;
-        Toast.makeText(this, String.format(Locale.getDefault(), "Score: %.2f%%", totalPercentCorrect), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, String.format(Locale.getDefault(), "Score: %.2f%%", getQuizViewModel().getTotalPercentCorrect()), Toast.LENGTH_SHORT).show();
     }
 
 }

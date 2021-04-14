@@ -71,4 +71,8 @@ public class QuizViewModel extends ViewModel {
     public int getQuestionListSize() {
         return questionList.size();
     }
+
+    public double getTotalPercentCorrect(){
+        return (totalCorrect / questionList.size()) * 100f;
+    }
 }
