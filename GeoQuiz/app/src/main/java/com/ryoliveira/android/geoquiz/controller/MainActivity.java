@@ -145,6 +145,9 @@ public class MainActivity extends AppCompatActivity {
         questionTextView.setText(questionTextResId);
         if(getQuizViewModel().isCurrentQuestionAnswered()){ // If question was already answered, disable true/false buttons
             setAnswerButtonsActiveState(false);
+            if(getQuizViewModel().didUserCheatOnCurrentQuestion()){
+                Toast.makeText(this, R.string.judgment_toast, Toast.LENGTH_SHORT).show();
+            }
         }else{
             setAnswerButtonsActiveState(true);
         }
@@ -154,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
         int messageResId;
 
         boolean correctAnswer = getQuizViewModel().getQuestionAnswer();
-        if(getQuizViewModel().isCheater()){
+        if(getQuizViewModel().didUserCheatOnCurrentQuestion()){
             messageResId = R.string.judgment_toast;
         }
         else if(answer == correctAnswer){
@@ -200,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
 
         if(requestCode == REQUEST_CODE_CHEAT){
             boolean isCheater = data.getBooleanExtra(EXTRA_ANSWER_SHOWN, false);
-            getQuizViewModel().setCheater(isCheater);
+            getQuizViewModel().markCheatedQuestion(isCheater);
         }
     }
 }

@@ -21,6 +21,7 @@ public class QuizViewModel extends ViewModel {
             new Question(R.string.question_asia, true));
 
     private boolean[] isAnswered = new boolean[questionList.size()];
+    private boolean[] hasCheated = new boolean[questionList.size()];
 
     private int currentIndex = 0;
     private int totalAnswered = 0;
@@ -106,5 +107,13 @@ public class QuizViewModel extends ViewModel {
 
     public void setCheater(boolean cheater) {
         isCheater = cheater;
+    }
+
+    public boolean didUserCheatOnCurrentQuestion(){
+        return hasCheated[currentIndex];
+    }
+
+    public void markCheatedQuestion(boolean wasCheated){
+        hasCheated[currentIndex] = wasCheated;
     }
 }
