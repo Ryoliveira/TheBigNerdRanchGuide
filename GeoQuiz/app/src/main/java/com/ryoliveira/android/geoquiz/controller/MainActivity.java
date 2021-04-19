@@ -1,5 +1,7 @@
 package com.ryoliveira.android.geoquiz.controller;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -8,6 +10,7 @@ import android.widget.Toast;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -23,9 +26,13 @@ public class MainActivity extends AppCompatActivity {
     private final String KEY_ANSWERED_QUESTIONS = "answeredQuestions";
     private final String KEY_TOTAL_ANSWERED = "totalQuestionsAnswered";
     private final String KEY_TOTAL_CORRECT = "totalCorrect";
+    private final static String EXTRA_ANSWER_SHOWN = "com.ryoliveira.android.geoquiz.answer_shown";
+
+    private final int REQUEST_CODE_CHEAT = 0;
 
     private Button trueButton;
     private Button falseButton;
+    private Button cheatButton;
     private ImageButton nextButton;
     private ImageButton prevButton;
     private TextView questionTextView;
@@ -49,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         falseButton = findViewById(R.id.false_button);
         nextButton = findViewById(R.id.next_button);
         prevButton = findViewById(R.id.prev_button);
+        cheatButton = findViewById(R.id.cheat_button);
         questionTextView = findViewById(R.id.question_text_view);
 
         //Button Listeners
@@ -75,6 +83,15 @@ public class MainActivity extends AppCompatActivity {
             getQuizViewModel().decreaseCurrentIndex();
             updateQuestion();
         });
+
+        cheatButton.setOnClickListener(view -> {
+            //start cheat activity
+            boolean answerIsTrue = getQuizViewModel().getQuestionAnswer();
+            Intent intent = CheatActivity.createAnswerIntent(this, answerIsTrue);
+            startActivityForResult(intent, REQUEST_CODE_CHEAT);
+        });
+
+
 
         //Set initial question
         updateQuestion();
@@ -121,7 +138,6 @@ public class MainActivity extends AppCompatActivity {
         outState.putBooleanArray(KEY_ANSWERED_QUESTIONS, getQuizViewModel().getIsAnswered());
         outState.putInt(KEY_TOTAL_ANSWERED, getQuizViewModel().getTotalAnswered());
         outState.putFloat(KEY_TOTAL_CORRECT, getQuizViewModel().getTotalCorrect());
-
     }
 
     private void updateQuestion(){
@@ -138,7 +154,10 @@ public class MainActivity extends AppCompatActivity {
         int messageResId;
 
         boolean correctAnswer = getQuizViewModel().getQuestionAnswer();
-        if(answer == correctAnswer){
+        if(getQuizViewModel().isCheater()){
+            messageResId = R.string.judgment_toast;
+        }
+        else if(answer == correctAnswer){
             messageResId = R.string.correct_toast;
             getQuizViewModel().increaseTotalCorrect();
         }else{
@@ -171,4 +190,17 @@ public class MainActivity extends AppCompatActivity {
         quizViewModel.setTotalCorrect(savedInstanceState.getFloat(KEY_TOTAL_CORRECT));
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(resultCode != Activity.RESULT_OK){
+            return;
+        }
+
+        if(requestCode == REQUEST_CODE_CHEAT){
+            boolean isCheater = data.getBooleanExtra(EXTRA_ANSWER_SHOWN, false);
+            getQuizViewModel().setCheater(isCheater);
+        }
+    }
 }

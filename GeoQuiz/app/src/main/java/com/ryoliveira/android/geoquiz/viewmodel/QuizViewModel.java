@@ -25,6 +25,7 @@ public class QuizViewModel extends ViewModel {
     private int currentIndex = 0;
     private int totalAnswered = 0;
     private float totalCorrect = 0;
+    private boolean isCheater = false;
 
 
     public boolean isCurrentQuestionAnswered() {
@@ -97,5 +98,13 @@ public class QuizViewModel extends ViewModel {
 
     public double getTotalPercentCorrect(){
         return (totalCorrect / questionList.size()) * 100f;
+    }
+
+    public boolean isCheater() {
+        return isCheater;
+    }
+
+    public void setCheater(boolean cheater) {
+        isCheater = cheater;
     }
 }

@@ -22,4 +22,10 @@
     <!--Content Descriptions -->
     <string name="previous_content_description">Previous</string>
     <string name="next_content_description">Next</string>
+
+    <!-- Cheating Values -->
+    <string name="warning_text">Are you sure you want to do this?</string>
+    <string name="show_answer_button">Show Answer</string>
+    <string name="cheat_button">Cheat!</string>
+    <string name="judgment_toast">Cheating is wrong</string>
 </resources>
