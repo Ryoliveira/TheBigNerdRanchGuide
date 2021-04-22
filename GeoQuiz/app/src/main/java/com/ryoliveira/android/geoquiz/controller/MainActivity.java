@@ -1,7 +1,10 @@
 package com.ryoliveira.android.geoquiz.controller;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -41,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         return ViewModelProviders.of(this).get(QuizViewModel.class);
     }
 
+    @SuppressLint("NewApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,10 +92,15 @@ public class MainActivity extends AppCompatActivity {
             //start cheat activity
             boolean answerIsTrue = getQuizViewModel().getQuestionAnswer();
             Intent intent = CheatActivity.createAnswerIntent(this, answerIsTrue);
-            startActivityForResult(intent, REQUEST_CODE_CHEAT);
+
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                ActivityOptions options = ActivityOptions.makeClipRevealAnimation(view, 0, 0, view.getWidth(), view.getHeight());
+                startActivityForResult(intent, REQUEST_CODE_CHEAT, options.toBundle());
+            }else{
+                startActivityForResult(intent, REQUEST_CODE_CHEAT);
+            }
+
         });
-
-
 
         //Set initial question
         updateQuestion();

@@ -25,4 +25,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/show_answer_button" />
+
+    <TextView
+        android:id="@+id/text_view_api_version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Api Level" />
 </LinearLayout>

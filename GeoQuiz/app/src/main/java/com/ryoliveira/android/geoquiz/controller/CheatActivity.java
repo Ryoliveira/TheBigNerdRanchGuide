@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
@@ -18,9 +19,12 @@ public class CheatActivity extends AppCompatActivity {
     private final static String EXTRA_ANSWER_SHOWN = "com.ryoliveira.android.geoquiz.answer_shown";
     private final static String KEY_ANSWER_SHOWN = "answerShown";
 
+    private final static String API_VERSION_TEXT = "API Level " + Build.VERSION.SDK_INT;
+
     private boolean answerIsTrue = false;
 
     private TextView answerTextView;
+    private TextView apiVersionTextView;
     private Button showAnswerButton;
     private boolean isAnswerShown;
 
@@ -42,8 +46,8 @@ public class CheatActivity extends AppCompatActivity {
             setAnswerShownResults(true);
         });
 
-
-
+        apiVersionTextView = findViewById(R.id.text_view_api_version);
+        apiVersionTextView.setText(API_VERSION_TEXT);
     }
 
     public static Intent createAnswerIntent(Context packageContext, boolean answerIsTrue){
