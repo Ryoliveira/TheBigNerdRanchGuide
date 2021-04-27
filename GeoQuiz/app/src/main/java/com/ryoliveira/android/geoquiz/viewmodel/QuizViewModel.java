@@ -27,6 +27,7 @@ public class QuizViewModel extends ViewModel {
     private int totalAnswered = 0;
     private float totalCorrect = 0;
     private boolean isCheater = false;
+    private int timesCheated = 0;
 
 
     public boolean isCurrentQuestionAnswered() {
@@ -115,5 +116,17 @@ public class QuizViewModel extends ViewModel {
 
     public void markCheatedQuestion(boolean wasCheated){
         hasCheated[currentIndex] = wasCheated;
+    }
+
+    public int getTimesCheated() {
+        return timesCheated;
+    }
+
+    public void setTimesCheated(int timesCheated) {
+        this.timesCheated = timesCheated;
+    }
+
+    public void increaseTimesCheated(){
+        this.timesCheated++;
     }
 }

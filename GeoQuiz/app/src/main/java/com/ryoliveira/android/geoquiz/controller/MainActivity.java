@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private final String KEY_TOTAL_ANSWERED = "totalQuestionsAnswered";
     private final String KEY_TOTAL_CORRECT = "totalCorrect";
     private final static String EXTRA_ANSWER_SHOWN = "com.ryoliveira.android.geoquiz.answer_shown";
+    private final String KEY_TIMES_CHEATED = "timesCheated";
 
     private final int REQUEST_CODE_CHEAT = 0;
 
@@ -147,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
         outState.putBooleanArray(KEY_ANSWERED_QUESTIONS, getQuizViewModel().getIsAnswered());
         outState.putInt(KEY_TOTAL_ANSWERED, getQuizViewModel().getTotalAnswered());
         outState.putFloat(KEY_TOTAL_CORRECT, getQuizViewModel().getTotalCorrect());
+        outState.putInt(KEY_TIMES_CHEATED, getQuizViewModel().getTimesCheated());
     }
 
     private void updateQuestion(){
@@ -154,11 +156,17 @@ public class MainActivity extends AppCompatActivity {
         questionTextView.setText(questionTextResId);
         if(getQuizViewModel().isCurrentQuestionAnswered()){ // If question was already answered, disable true/false buttons
             setAnswerButtonsActiveState(false);
+            cheatButton.setEnabled(false);
             if(getQuizViewModel().didUserCheatOnCurrentQuestion()){
                 Toast.makeText(this, R.string.judgment_toast, Toast.LENGTH_SHORT).show();
             }
         }else{
             setAnswerButtonsActiveState(true);
+            if(getQuizViewModel().getTimesCheated() >= 3){
+                cheatButton.setEnabled(false);
+            }else{
+                cheatButton.setEnabled(true);
+            }
         }
     }
 
@@ -200,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
         quizViewModel.setIsAnswered(savedInstanceState.getBooleanArray(KEY_ANSWERED_QUESTIONS));
         quizViewModel.setTotalAnswered(savedInstanceState.getInt(KEY_TOTAL_ANSWERED));
         quizViewModel.setTotalCorrect(savedInstanceState.getFloat(KEY_TOTAL_CORRECT));
+        quizViewModel.setTimesCheated(savedInstanceState.getInt(KEY_TIMES_CHEATED));
     }
 
     @Override
@@ -213,6 +222,7 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == REQUEST_CODE_CHEAT){
             boolean isCheater = data.getBooleanExtra(EXTRA_ANSWER_SHOWN, false);
             getQuizViewModel().markCheatedQuestion(isCheater);
+            if(isCheater) getQuizViewModel().increaseTimesCheated();
         }
     }
 }
